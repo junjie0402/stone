@@ -7,10 +7,23 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Lexer {
+	/*
+	 *  () 将括号内视为完整的模式
+	 *  \p{Punct} : 标点符号
+	 *  \s : 空字符
+	 *                                                \s* : 任意长度的任意空字符  
+	 *                                             (//.*) : 注释
+	 *                                             [0-9]+ : 整型字面量
+	 *                                  \"(\"|\\|\n|除")* : 字符串字面量
+	 *  ([A-Z_a-z][A-Z_a-z0-9]*|==|<=|>=|&&||||\p{Punct}) : 标识符（这里将一些判断条件也认为是标识符了）
+	 *                                  
+	 *  
+	 */
     public static String regexPat
         = "\\s*((//.*)|([0-9]+)|(\"(\\\\\"|\\\\\\\\|\\\\n|[^\"])*\")"
           + "|[A-Z_a-z][A-Z_a-z0-9]*|==|<=|>=|&&|\\|\\||\\p{Punct})?";
     private Pattern pattern = Pattern.compile(regexPat);
+    
     private ArrayList<Token> queue = new ArrayList<Token>();
     private boolean hasMore;
     private LineNumberReader reader;
@@ -39,6 +52,8 @@ public class Lexer {
                 return false;
         return true;
     }
+    
+    // readLine 每次只读取一行文本，将其解析为一个个不同类型的token，并存放在队列 queue 中
     protected void readLine() throws ParseException {
         String line;
         try {
@@ -68,8 +83,9 @@ public class Lexer {
     }
     protected void addToken(int lineNo, Matcher matcher) {
         String m = matcher.group(1);
-        if (m != null) // if not a space
-            if (matcher.group(2) == null) { // if not a comment
+        if (m != null) // if not a space : 连续的空符号会被忽略
+            if (matcher.group(2) == null) { // if not a comment : 注释会被忽略
+            	// 最终会被分解为 整型字面量、字符串字面量或标识符
                 Token token;
                 if (matcher.group(3) != null)
                     token = new NumToken(lineNo, Integer.parseInt(m));
