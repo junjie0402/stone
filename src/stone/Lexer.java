@@ -6,6 +6,18 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/*
+ 
+ 本章测试代码：（debug模式运行程序后输入下面的代码）
+
+while i < 10 {
+  sum = sum + i
+  i = i + 1
+}
+sum
+
+ */
+
 public class Lexer {
 	/*
 	 *  () 将括号内视为完整的模式
