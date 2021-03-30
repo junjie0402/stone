@@ -8,9 +8,18 @@ public class BasicParser {
     HashSet<String> reserved = new HashSet<String>();
     Operators operators = new Operators();
     
+    /*
+     * 表 4.2 BNF中用到的元符号
+     * { pat } 		模式pat至少重复0次
+     * [ pat ] 		与重复出现0次或1次的模式pat匹配
+     * pat1 | pat2 	与pat1或pat2匹配
+     * ()			括号内视为一个完整的模式
+     */
+    
+    //------------------------------------------------------------
     
     /*
-     stone 语言的语法定义：（BNF 语法规则）
+     代码清单5.1 Stone 语言的语法定义：（BNF 语法规则）
      
      primary : "(" expr ")" | NUMBER | IDENTIFIER | STRING 
      factor  : "-" primary | primary
@@ -23,10 +32,15 @@ public class BasicParser {
      program : [ statement ] (";" | EOL)
      */
     
+    //------------------------------------------------------------
+    
     /*
      * 左右括号不仅是终结符，也是分割字符，通过 sep 方法添加
-     * 非终结符由 ast 方法添加
+     * 非终结符由 ast 方法添加，参数是一个需要添加的非终结符对应的Parser对象
+     * repeat 方法对应 { pat } 模式
+     * option 方法对应 [ pat ] 模式
      */
+    
     
     // 以下 Parser 类型字段，是将 BNF 语法规则转换成 Java 语言的结果
     Parser expr0 = rule();
@@ -36,8 +50,10 @@ public class BasicParser {
             rule().identifier(Name.class, reserved),  //identifier:标识符。reserved中的字符无法作为标识符的变量名使用
             rule().string(StringLiteral.class)
           );
-    Parser factor = rule().or(rule(NegativeExpr.class).sep("-").ast(primary),
-                              primary);                               
+    Parser factor = rule().or(
+    		rule(NegativeExpr.class).sep("-").ast(primary),
+            primary
+          );                               
     Parser expr = expr0.expression(BinaryExpr.class, factor, operators);
 
     Parser statement0 = rule();
@@ -47,13 +63,12 @@ public class BasicParser {
         .sep("}");
     Parser simple = rule(PrimaryExpr.class).ast(expr);
     Parser statement = statement0.or(
-            rule(IfStmnt.class).sep("if").ast(expr).ast(block)
-                               .option(rule().sep("else").ast(block)),
+            rule(IfStmnt.class).sep("if").ast(expr).ast(block).option(rule().sep("else").ast(block)),
             rule(WhileStmnt.class).sep("while").ast(expr).ast(block),
-            simple);
+            simple
+          );
 
-    Parser program = rule().or(statement, rule(NullStmnt.class))
-                           .sep(";", Token.EOL);
+    Parser program = rule().or(statement, rule(NullStmnt.class)).sep(";", Token.EOL);
 
     
     

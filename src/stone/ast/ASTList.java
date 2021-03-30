@@ -2,6 +2,7 @@ package stone.ast;
 import java.util.List;
 import java.util.Iterator;
 
+// ASTList 是含有树枝的节点对象的父类
 public class ASTList extends ASTree {
     protected List<ASTree> children;
     public ASTList(List<ASTree> list) { children = list; }

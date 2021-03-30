@@ -3,6 +3,7 @@ import java.util.Iterator;
 import java.util.ArrayList;
 import stone.Token;
 
+// ASTLeaf是叶节点（不含树枝的节点）的父类
 public class ASTLeaf extends ASTree {
     private static ArrayList<ASTree> empty = new ArrayList<ASTree>(); 
     protected Token token;
