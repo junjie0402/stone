@@ -30,6 +30,15 @@ public class BasicParser {
                  | "while" expr block 
                  | simple
      program : [ statement ] (";" | EOL)
+     
+     5.1 Stone的语法
+     非终结符 Program 与 1 行 Stone 语言程序匹配。
+     NUMBER、 IDENTIFIER、 STRING、 OP、 EOL(换行) 都是终结符。终结符是一些事先规定好的符号，表示各类单词。
+     非终结符expr用于表示表达式，两个factor之间有一个双目运算符
+     非终结符primary（基本构成单元）用于表示括号扩起的表达式、整型字面量、标识符或字符串字面量
+     非终结符factor（因子）表示一个primary，或primary之前再添加一个-号的组合
+     block(代码块)指的是{}括起来的statement(语句)序列
+     statement是if语句、while语句或仅仅是简单表达式语句（simple）
      */
     
     //------------------------------------------------------------
@@ -58,7 +67,8 @@ public class BasicParser {
 
     Parser statement0 = rule();
     Parser block = rule(BlockStmnt.class)
-        .sep("{").option(statement0)
+        .sep("{")
+        .option(statement0)
         .repeat(rule().sep(";", Token.EOL).option(statement0))
         .sep("}");
     Parser simple = rule(PrimaryExpr.class).ast(expr);
@@ -69,7 +79,10 @@ public class BasicParser {
           );
 
     Parser program = rule().or(statement, rule(NullStmnt.class)).sep(";", Token.EOL);
-
+    //构建 statement 时，调用了 statement0 的函数。最终效果是 statement 结构和 statement0 一样。因此 program 是个递归嵌套的树。递归怎么说？下面举例：
+    //program 下存在节点 statement ，statement 下存在节点 if 表达式， if 表达式下存在节点 block，block 下存在 statement0 （即 statement）
+    //program -> statement -> if 表达式 -> block -> statement0（即 statement）
+    //               |________________________________________________|   
     
     
     public BasicParser() {
