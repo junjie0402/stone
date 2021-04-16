@@ -32,7 +32,7 @@ public class BasicParser {
      program : [ statement ] (";" | EOL)
      
      5.1 Stone的语法
-     非终结符 Program 与 1 行 Stone 语言程序匹配。
+     非终结符 program 与 1 行 Stone 语言程序匹配。
      NUMBER、 IDENTIFIER、 STRING、 OP、 EOL(换行) 都是终结符。终结符是一些事先规定好的符号，表示各类单词。
      非终结符expr用于表示表达式，两个factor之间有一个双目运算符
      非终结符primary（基本构成单元）用于表示括号扩起的表达式、整型字面量、标识符或字符串字面量
@@ -44,8 +44,8 @@ public class BasicParser {
     //------------------------------------------------------------
     
     /*
-     * 左右括号不仅是终结符，也是分割字符，通过 sep 方法添加
-     * 非终结符由 ast 方法添加，参数是一个需要添加的非终结符对应的Parser对象
+     * 左右括号不仅是"终结符"，也是分割字符，通过 sep 方法添加
+     * "非终结符"由 ast 方法添加，参数是一个需要添加的非终结符对应的Parser对象
      * repeat 方法对应 { pat } 模式
      * option 方法对应 [ pat ] 模式
      */
